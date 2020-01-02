@@ -1,14 +1,12 @@
 exports.up = function(knex) {
   return knex.schema.createTable('ingest', tbl => {
-    tbl
-      .text('id', 128)
-      .unique()
-      .notNullable()
-      .primary();
+    tbl.increments('id');
+    tbl.text('places_id').notNullable();
     tbl.boolean('accessibility').notNullable();
-    tbl.float('confidence', 128).notNullable();
+    tbl.float('confidence').notNullable();
+    tbl.text('reference').unique();
     tbl.timestamp('created_at').defaultTo(knex.fn.now());
-    tbl.index('id');
+    tbl.index('places_id');
   });
 };
 

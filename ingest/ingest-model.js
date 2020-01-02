@@ -11,19 +11,33 @@ function find() {
 }
 
 async function insertOrUpdate(rows) {
-  return await rows.map(async ({ id, accessibility, confidence }) => {
-    const insert = db('ingest').insert({ id, accessibility, confidence });
+  const result = rows.map(
+    async ({ places_id, accessibility, confidence, reference = null }) => {
+      const insert = db('ingest')
+        .insert({
+          places_id,
+          accessibility,
+          confidence,
+          reference
+        })
+        .toString();
 
-    const update = db('ingest')
-      .update({ accessibility, confidence })
-      .whereRaw('ingest.id = ?', [id]);
+      const update = db('ingest')
+        .update({ places_id, accessibility, confidence, reference })
+        .whereRaw('ingest.reference = ?', [reference]);
 
-    const query = util.format(
-      '%s ON CONFLICT (id) DO UPDATE SET %s',
-      insert.toString(),
-      update.toString().replace(/^update\s.*\sset\s/i, '')
-    );
+      const query = util.format(
+        '%s ON CONFLICT (reference ) DO UPDATE SET %s',
+        insert.toString(),
+        update.toString().replace(/^update\s.*\sset\s/i, '')
+      );
 
-    return await db.raw(query);
-  });
+      if (reference) {
+        return await db.raw(query);
+      } else {
+        return await db.raw(insert.toString());
+      }
+    }
+  );
+  return result.length;
 }

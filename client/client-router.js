@@ -6,11 +6,11 @@ router.get('/', (req, res) => {
   Client.find()
     .then(response => {
       console.log(response);
-      res.status(200).json({ message: 'Route working', data: response.data });
+      res.status(200).json({ message: 'Route working', data: response });
     })
     .catch(error => {
       console.log(error);
-      res.status(500).json({ message: 'Route not working' });
+      res.status(500).json({ message: 'Route not working', error });
     });
 });
 
