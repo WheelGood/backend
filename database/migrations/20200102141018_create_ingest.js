@@ -5,8 +5,8 @@ exports.up = function(knex) {
       .unique()
       .notNullable()
       .primary();
+    tbl.boolean('accessibility').notNullable();
     tbl.float('confidence', 128).notNullable();
-    tbl.boolean('user_id').notNullable();
     tbl.timestamp('created_at').defaultTo(knex.fn.now());
     tbl.index('id');
   });
