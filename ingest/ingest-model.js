@@ -10,20 +10,20 @@ function find() {
   return db('ingest');
 }
 
-async function insertOrUpdate({ id, accessibility, confidence }) {
-  const insert = db('ingest')
-    .insert({ id, accessibility, confidence })
-    .toString();
+async function insertOrUpdate(rows) {
+  return await rows.map(async ({ id, accessibility, confidence }) => {
+    const insert = db('ingest').insert({ id, accessibility, confidence });
 
-  const update = db('ingest')
-    .update({ accessibility, confidence })
-    .whereRaw('ingest.id = ?', [id]);
+    const update = db('ingest')
+      .update({ accessibility, confidence })
+      .whereRaw('ingest.id = ?', [id]);
 
-  const query = util.format(
-    '%s ON CONFLICT (id) DO UPDATE SET %s',
-    insert.toString(),
-    update.toString().replace(/^update\s.*\sset\s/i, '')
-  );
+    const query = util.format(
+      '%s ON CONFLICT (id) DO UPDATE SET %s',
+      insert.toString(),
+      update.toString().replace(/^update\s.*\sset\s/i, '')
+    );
 
-  return await db.raw(query);
+    return await db.raw(query);
+  });
 }
