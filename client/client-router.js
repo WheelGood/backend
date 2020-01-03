@@ -28,6 +28,7 @@ router.get('/places', async (req, res) => {
   const userReviews = await Client.find(
     await places.data.results.map(({ place_id }) => place_id)
   );
+  console.log(userReviews.length);
 
   // const aiScores = await Ingest.find(
   //   await places.data.results.map(({ place_id }) => place_id)
