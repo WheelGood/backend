@@ -10,7 +10,7 @@ exports.up = function(knex) {
       .onDelete('CASCADE')
       .onUpdate('CASCADE');
     tbl.text('place_id');
-    tbl.text('accessibility');
+    tbl.integer('rating').notNullable();
     tbl.text('review');
     tbl.timestamp('created_at').defaultTo(knex.fn.now());
   });
