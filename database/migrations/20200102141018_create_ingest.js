@@ -6,7 +6,6 @@ exports.up = function(knex) {
     tbl.float('confidence').notNullable();
     tbl.text('reference').unique();
     tbl.timestamp('created_at').defaultTo(knex.fn.now());
-    tbl.index('place_id');
   });
 };
 
