@@ -1,6 +1,6 @@
 exports.up = function(knex) {
   return knex.schema.createTable('ingest', tbl => {
-    tbl.increments('id');
+    tbl.increments('id').primary();
     tbl.text('places_id').notNullable();
     tbl.boolean('accessibility').notNullable();
     tbl.float('confidence').notNullable();

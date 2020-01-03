@@ -18,25 +18,17 @@ router.get('/', (req, res) => {
 router.get('/places', async (req, res) => {
   const { type } = req.query;
   const { lat = 47.60215, lon = -122.325971 } = req.body;
-  let pages = [];
-  for (let i = 0; i < 3; i++) {
-    const result = await axios.get(
-      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&token=${i &&
-        pages[i - 1].next_page_token}&radius=5000&type=${type && type}&key=${
-        process.env.GOOGLE_MAPS_KEY
-      }`
-    );
-    pages[i] = result.data;
-  }
 
-  let places = [];
-  pages.forEach(page => {
-    page.results.forEach(place => {
-      places.push(place);
-    });
-  });
+  const places = await axios.get(
+    `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=5000&type=${type &&
+      type}&key=${process.env.GOOGLE_MAPS_KEY}`
+  );
 
-  const processedPlaces = places.map(
+  const userReviews = await Client.find(
+    await places.data.results.map(({ place_id }) => place_id)
+  );
+
+  const processedPlaces = places.data.results.map(
     ({
       place_id,
       name,
@@ -51,6 +43,9 @@ router.get('/places', async (req, res) => {
           Math.random(1) > 0.3 ? (Math.random(1) > 0.5 ? true : false) : null,
         ai_score: Math.random(1),
         user_rating: [-1, 0, 1, null][Math.round(Math.random()) * 3],
+        user_reviews: userReviews.filter(
+          review => review.place_id === place_id
+        ),
         name,
         location,
         photos,

@@ -4,6 +4,6 @@ module.exports = {
   find
 };
 
-function find() {
-  return db('ingest');
+async function find(placeIds) {
+  return await db('reviews').whereIn('place_id', placeIds);
 }
