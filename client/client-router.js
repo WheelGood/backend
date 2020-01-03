@@ -53,8 +53,10 @@ router.get('/places', async (req, res) => {
           Math.random(1) > 0.3 ? (Math.random(1) > 0.5 ? true : false) : null,
         ai_score: Math.random(1),
         user_rating: filteredReviews.length
-          ? filteredReviews.reduce((acc, review) => acc + review.rating, 0) /
-            filteredReviews.length
+          ? Math.round(
+              filteredReviews.reduce((acc, review) => acc + review.rating, 0) /
+                filteredReviews.length
+            )
           : null,
         user_reviews: filteredReviews,
         name,
