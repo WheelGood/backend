@@ -11,6 +11,13 @@ exports.seed = function(knex) {
           name: 'Dave Davis',
           email: 'davedavis@example.com',
           avatar: 'https://randomuser.me/api/portraits/men/32.jpg'
+        },
+        {
+          id: 2,
+          username: 'wendywallace',
+          name: 'Wendy Wallace',
+          email: 'wendyw@example.com',
+          avatar: 'https://randomuser.me/api/portraits/women/32.jpg'
         }
       ]);
     });

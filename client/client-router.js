@@ -28,6 +28,8 @@ router.get('/places', async (req, res) => {
     await places.data.results.map(({ place_id }) => place_id)
   );
 
+  console.log(userReviews);
+
   // const userScoresAndReviews = userReviews.map(reviews => {
   //   const score = reviews.reduce((acc, review) => acc + review.rating, 0);
   //   return { id: review.place, score: score / reviews.length, reviews };
@@ -42,15 +44,19 @@ router.get('/places', async (req, res) => {
       types,
       opening_hours
     }) => {
+      const filteredReviews = userReviews.filter(
+        review => review.place_id === place_id
+      );
       return {
         place_id,
         ai_accessibility:
           Math.random(1) > 0.3 ? (Math.random(1) > 0.5 ? true : false) : null,
         ai_score: Math.random(1),
-        user_rating: Math.round(Math.random(1) * 4 + 1),
-        user_reviews: userReviews.filter(
-          review => review.place_id === place_id
-        ),
+        user_rating: filteredReviews.length
+          ? filteredReviews.reduce((acc, review) => acc + review.rating, 0) /
+            filteredReviews.length
+          : null,
+        user_reviews: filteredReviews,
         name,
         location,
         photos,
