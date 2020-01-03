@@ -28,10 +28,10 @@ router.get('/places', async (req, res) => {
     await places.data.results.map(({ place_id }) => place_id)
   );
 
-  const userScoresAndReviews = userReviews.map(reviews => {
-    const score = reviews.reduce((acc, review) => acc + review.rating, 0);
-    return { id: review.place, score: score / reviews.length, reviews };
-  });
+  // const userScoresAndReviews = userReviews.map(reviews => {
+  //   const score = reviews.reduce((acc, review) => acc + review.rating, 0);
+  //   return { id: review.place, score: score / reviews.length, reviews };
+  // });
 
   const processedPlaces = places.data.results.map(
     ({
