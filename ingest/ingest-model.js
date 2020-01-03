@@ -6,16 +6,16 @@ module.exports = {
   insertOrUpdate
 };
 
-function find() {
-  return db('ingest');
+async function find(placeIds) {
+  return await db('ingest').whereIn('place_id', placeIds);
 }
 
 async function insertOrUpdate(rows) {
   const result = rows.map(
-    async ({ places_id, accessibility, confidence, reference = null }) => {
+    async ({ place_id, accessibility, confidence, reference = null }) => {
       const insert = db('ingest')
         .insert({
-          places_id,
+          place_id,
           accessibility,
           confidence,
           reference
@@ -23,7 +23,7 @@ async function insertOrUpdate(rows) {
         .toString();
 
       const update = db('ingest')
-        .update({ places_id, accessibility, confidence, reference })
+        .update({ place_id, accessibility, confidence, reference })
         .whereRaw('ingest.reference = ?', [reference]);
 
       const query = util.format(
