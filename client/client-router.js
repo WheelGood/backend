@@ -28,6 +28,11 @@ router.get('/places', async (req, res) => {
     await places.data.results.map(({ place_id }) => place_id)
   );
 
+  const userScoresAndReviews = userReviews.map(reviews => {
+    const score = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return { id: review.place, score: score / reviews.length, reviews };
+  });
+
   const processedPlaces = places.data.results.map(
     ({
       place_id,
@@ -42,7 +47,7 @@ router.get('/places', async (req, res) => {
         ai_accessibility:
           Math.random(1) > 0.3 ? (Math.random(1) > 0.5 ? true : false) : null,
         ai_score: Math.random(1),
-        user_rating: [-1, 0, 1, null][Math.round(Math.random()) * 3],
+        user_rating: Math.round(Math.random(1) * 4 + 1),
         user_reviews: userReviews.filter(
           review => review.place_id === place_id
         ),
