@@ -1,5 +1,6 @@
 const express = require('express');
-const Client = require('./client-model.js');
+const Client = require('./client-model');
+const Ingest = require('../ingest/ingest-model');
 const router = express.Router();
 const axios = require('axios');
 
@@ -28,12 +29,9 @@ router.get('/places', async (req, res) => {
     await places.data.results.map(({ place_id }) => place_id)
   );
 
-  console.log(userReviews);
-
-  // const userScoresAndReviews = userReviews.map(reviews => {
-  //   const score = reviews.reduce((acc, review) => acc + review.rating, 0);
-  //   return { id: review.place, score: score / reviews.length, reviews };
-  // });
+  const aiScores = await Ingest.find(
+    await places.data.results.map(({ place_id }) => place_id)
+  );
 
   const processedPlaces = places.data.results.map(
     ({
@@ -47,11 +45,23 @@ router.get('/places', async (req, res) => {
       const filteredReviews = userReviews.filter(
         review => review.place_id === place_id
       );
+      const filteredAiScores = aiScores.filter(
+        review => review.place_id === place_id
+      );
       return {
         place_id,
         ai_accessibility:
           Math.random(1) > 0.3 ? (Math.random(1) > 0.5 ? true : false) : null,
-        ai_score: Math.random(1),
+        ai_score: filteredAiScores.length
+          ? Math.round(
+              (filteredAiScores.reduce(
+                (acc, review) => acc + review.confidence,
+                0
+              ) *
+                5) /
+                filteredAiScores.length
+            )
+          : null,
         user_rating: filteredReviews.length
           ? Math.round(
               filteredReviews.reduce((acc, review) => acc + review.rating, 0) /
