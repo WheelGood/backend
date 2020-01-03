@@ -3,11 +3,16 @@ const db = require('../database/dbConfig');
 
 module.exports = {
   find,
+  findAll,
   insertOrUpdate
 };
 
 async function find(placeIds) {
   return await db('ingest').whereIn('place_id', placeIds);
+}
+
+async function findAll() {
+  return await db('ingest');
 }
 
 async function insertOrUpdate(rows) {
